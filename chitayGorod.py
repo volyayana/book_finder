@@ -9,7 +9,6 @@ class ChitaiGorod():
         self.books_url = 'https://webapi.chitai-gorod.ru/web/goods/extension/list/'
         self.book_url = 'https://www.chitai-gorod.ru'
         self.image_url = 'https://img-gorod.ru'
-        self.cheepest_book = None
         self.books = self.get_books(search_query)
 
     def get_ids(self, search_query):
@@ -26,7 +25,6 @@ class ChitaiGorod():
         data = 'token=123&action=read&'
         for id in book_ids:
             data += f'data[]={ id }&'
-        #print(data)
         books = requests.post(self.books_url,
                               headers=headers,
                               data=data).json()
@@ -41,15 +39,12 @@ class ChitaiGorod():
                               'name': book['name'],
                               'link': f'{self.book_url}/{book["link"]}',
                               'price': book['price'],
-                              'description': book['short_text'],
+                              'store': 'Читай город',
                               'image_url': f'{self.image_url}/{book["image_url"]}'})
-            sorted(books, key=lambda x: x['price'])
-            self.cheepest_book = books[0]
         return books
 
 
 if __name__ == '__main__':
     cg = ChitaiGorod('три любви кронин')
     pprint(cg.books)
-    pprint(cg.cheepest_book)
 
