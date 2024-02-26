@@ -1,6 +1,8 @@
+# This store temporarily doesn't work
 from bs4 import BeautifulSoup
 import requests
 from urllib.parse import quote
+
 
 class Labirint():
     def __init__(self, search_query):

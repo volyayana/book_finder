@@ -1,8 +1,6 @@
 aiogram==2.25.1
 python-dotenv==0.19.2
 pydantic==1.10.6
-python-telegram-bot-pagination
-redis==4.4.2
 requests~=2.28.1
 beautifulsoup4~=4.11.1
 aiohttp~=3.8.5
