@@ -21,7 +21,11 @@ dp = Dispatcher()
 async def process_text(message: types.Message):
     result = await get_books_from_all_sources(message.text)
     if result:
-        await message.reply(result, parse_mode=ParseMode.HTML)
+        await message.reply(
+            result,
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=True,
+        )
 
 
 @dp.message(CommandStart())

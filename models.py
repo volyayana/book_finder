@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class Book(BaseModel):
-    author: str
+    author: str | None = None
     name: str
     link: str
     price: float

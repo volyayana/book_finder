@@ -1,22 +1,27 @@
-from itertools import chain
-
 from settings import settings
+from store.abstractStore import AbstractStore
 from store.chitay_gorod import ChitaiGorod
+from store.labirint import Labirint
+
+
+async def get_books_by_source(source_list: list[type[AbstractStore]], search_query: str):
+    books = []
+    for source in source_list:
+        store = source()
+        books.extend(await store.get_books(search_query))
+    return books
 
 
 async def get_books_from_all_sources(search_query: str | None = ''):
     if not search_query:
         return None
 
-    chitai_gorod = ChitaiGorod()
+    sources = [ChitaiGorod, Labirint]
 
-    unsorted_books = []
-    unsorted_books.append(await chitai_gorod.get_books(search_query))
+    unsorted_books = await get_books_by_source(sources, search_query)
+    sorted_books = sorted(unsorted_books, key=lambda x: x.price)[:settings.limit_books]
 
-    sorted_books = [sorted(books, key=lambda x: x.price) for books in unsorted_books]
-    sorted_limited_books = [books[:settings.limit_per_store] for books in sorted_books]
-
-    return format_books_list(list(chain.from_iterable(sorted_limited_books)))
+    return format_books_list(sorted_books)
 
 
 def format_books_list(books):

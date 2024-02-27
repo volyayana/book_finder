@@ -1,12 +1,14 @@
 import asyncio
+import logging
 
 import aiohttp
 from pprint import pprint
 
 from models import Book
+from store.abstractStore import AbstractStore
 
 
-class ChitaiGorod:
+class ChitaiGorod(AbstractStore):
     def __init__(self):
         self.store = 'Читай город'
         self.pre_url = 'https://www.chitai-gorod.ru'
@@ -16,6 +18,7 @@ class ChitaiGorod:
         self.access_token = None
 
     async def pre_request(self, search_query: str):
+        headers = {'User-agent': 'Mozilla/5.0'}
         params = {
             'phrase': search_query,
             'products[page]': 1,
@@ -25,16 +28,22 @@ class ChitaiGorod:
         }
         async with aiohttp.ClientSession() as session:
             async with session.get(f'{self.pre_url}/search',
+                                   headers=headers,
                                    params=params,
-                                   verify_ssl=False):
-                cookies = session.cookie_jar.filter_cookies(self.pre_url)
-                self.access_token = cookies['access-token'].value.replace('%20', ' ')
+                                   verify_ssl=False) as resp:
+                try:
+                    logging.debug('ChitaiGorod pre-request status_code: %s' % resp.status)
+                    cookies = session.cookie_jar.filter_cookies(self.pre_url)
+                    self.access_token = cookies['access-token'].value.replace('%20', ' ')
+                except KeyError:
+                    logging.error('Error occurred during ChitaiGorod pre-request')
 
     async def get_books(self, search_query: str):
         # pre-request only to get cookies with token
         await self.pre_request(search_query)
+        if self.access_token is None:
+            return []
 
-        books = None
         headers = {
             'Authorization': self.access_token,
         }

@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     api_token: str = Field(alias='TELEGRAM_KEY')
 
-    limit_per_store: int = Field(alias='LIMIT_PER_STORE')
+    limit_books: int = Field(alias='LIMIT_BOOKS')
 
 
 class Config:
