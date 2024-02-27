@@ -26,7 +26,7 @@ class ChitaiGorod:
         async with aiohttp.ClientSession() as session:
             async with session.get(f'{self.pre_url}/search',
                                    params=params,
-                                   verify_ssl=False) as resp:
+                                   verify_ssl=False):
                 cookies = session.cookie_jar.filter_cookies(self.pre_url)
                 self.access_token = cookies['access-token'].value.replace('%20', ' ')
 

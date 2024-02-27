@@ -1,10 +1,11 @@
-from pydantic import BaseSettings, Field
+from pydantic import Field
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    api_token: str = Field(..., env='TELEGRAM_KEY')
+    api_token: str = Field(alias='TELEGRAM_KEY')
 
-    limit_per_store: int = Field(..., env='LIMIT_PER_STORE')
+    limit_per_store: int = Field(alias='LIMIT_PER_STORE')
 
 
 class Config:
@@ -12,4 +13,4 @@ class Config:
     env_file_encoding = 'utf-8'
 
 
-settings = Settings()
+settings = Settings()  # type: ignore

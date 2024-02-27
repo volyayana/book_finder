@@ -4,7 +4,10 @@ from settings import settings
 from store.chitay_gorod import ChitaiGorod
 
 
-async def get_books_from_all_sources(search_query: str):
+async def get_books_from_all_sources(search_query: str | None = ''):
+    if not search_query:
+        return None
+
     chitai_gorod = ChitaiGorod()
 
     unsorted_books = []

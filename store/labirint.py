@@ -37,5 +37,5 @@ class Labirint():
 
 
 if __name__ == '__main__':
-    l = Labirint('толстой детство')
-    print(l.books)
+    lab = Labirint('толстой детство')
+    print(lab.books)
