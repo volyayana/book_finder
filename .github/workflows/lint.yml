@@ -1,0 +1,26 @@
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        pip install flake8==7.0.0 mypy==1.8.0
+
+    - name: Run flake8
+      run: |
+        flake8 .
+
+    - name: Run mypy
+      run: |
+        mypy . --ignore-missing-imports
