@@ -11,7 +11,6 @@ from store.abstractStore import AbstractStore
 class ChitaiGorod(AbstractStore):
     def __init__(self):
         self.store = 'Читай город'
-        self.pre_url = 'https://www.chitai-gorod.ru'
         self.books_url = 'https://web-gate.chitai-gorod.ru/api/v2/search/product'
         self.book_url = 'https://www.chitai-gorod.ru'
         self.image_url = 'https://content.img-gorod.ru'
@@ -27,13 +26,13 @@ class ChitaiGorod(AbstractStore):
             'filters[onlyAvailable]': 1,
         }
         async with aiohttp.ClientSession() as session:
-            async with session.get(f'{self.pre_url}/search',
+            async with session.get(f'{self.books_url}/search',
                                    headers=headers,
                                    params=params,
                                    verify_ssl=False) as resp:
                 try:
                     logging.debug('ChitaiGorod pre-request status_code: %s' % resp.status)
-                    cookies = session.cookie_jar.filter_cookies(self.pre_url)
+                    cookies = session.cookie_jar.filter_cookies(self.books_url)
                     self.access_token = cookies['access-token'].value.replace('%20', ' ')
                 except KeyError:
                     logging.error('Error occurred during ChitaiGorod pre-request')

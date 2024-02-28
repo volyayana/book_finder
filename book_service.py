@@ -1,6 +1,6 @@
 from settings import settings
 from store.abstractStore import AbstractStore
-from store.chitay_gorod import ChitaiGorod
+from store.chitai_gorod import ChitaiGorod
 from store.labirint import Labirint
 
 

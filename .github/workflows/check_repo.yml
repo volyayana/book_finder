@@ -15,7 +15,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install flake8==7.0.0 mypy==1.8.0 types_requests==2.31.0
+        pip install -r requirements.txt
 
     - name: Run flake8
       run: |
@@ -24,3 +24,7 @@ jobs:
     - name: Run mypy
       run: |
         mypy .
+
+    - name: Run tests
+      run: |
+        pytest

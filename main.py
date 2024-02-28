@@ -47,6 +47,7 @@ async def main():
     logging.info("Starting bot...")
     await dp.start_polling(bot)
 
+
 if __name__ == '__main__':
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
