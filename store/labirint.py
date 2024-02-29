@@ -3,27 +3,35 @@ from pprint import pprint
 
 import aiohttp
 import asyncio
+
+from aiohttp_retry import RetryClient, ExponentialRetry
 from bs4 import BeautifulSoup
 from urllib.parse import quote
 
 from models import Book
+from config.settings import Settings
 from store.abstractStore import AbstractStore
 
 
 class Labirint(AbstractStore):
-    def __init__(self):
+    def __init__(self, settings: Settings):
         self.url = 'https://www.labirint.ru'
         self.headers = {'User-agent': 'Mozilla/5.0'}
         self.params = 'order=relevance&available=1&id_genre=-1'
         self.store = 'Лабиринт'
+        self.settings = settings
 
     async def get_books(self, search_query: str):
         books = []
         async with aiohttp.ClientSession() as session:
-            async with session.get(f'{ self.url }/search/{ quote(search_query) }/',
-                                   headers=self.headers,
-                                   params=self.params,
-                                   verify_ssl=False) as resp:
+            retry_client = RetryClient(session)
+            retry_options = ExponentialRetry(statuses=self.settings.allowed_statuses)
+            async with retry_client.get(f'{ self.url }/search/{ quote(search_query) }/',
+                                        headers=self.headers,
+                                        params=self.params,
+                                        ssl=False,
+                                        retry_options=retry_options,
+                                        ) as resp:
                 if resp.status != 200:
                     logging.error('ERROR: Labirint request status_code: %s' % resp.status)
                     return None

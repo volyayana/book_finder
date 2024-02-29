@@ -6,11 +6,12 @@ from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 
 from book_service import get_books_from_all_sources
-from settings import settings
+from config.settings import Settings
 
-from dotenv import load_dotenv
+from store.chitai_gorod import ChitaiGorod
+from store.labirint import Labirint
 
-load_dotenv()
+settings = Settings()  # type: ignore
 logging.basicConfig(level=logging.INFO)
 
 
@@ -18,8 +19,11 @@ bot = Bot(token=settings.api_token)
 dp = Dispatcher()
 
 
+sources = [ChitaiGorod(settings), Labirint(settings)]
+
+
 async def process_text(message: types.Message):
-    result = await get_books_from_all_sources(message.text)
+    result = await get_books_from_all_sources(sources, message.text)
     if result:
         await message.reply(
             result,

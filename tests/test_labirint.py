@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock
 
-import aiohttp
 import pytest as pytest
+from aiohttp_retry import RetryClient
 from bs4 import ResultSet, BeautifulSoup
 
 from store.labirint import Labirint
@@ -50,7 +50,7 @@ async def test_books_template_without_author(labirint: Labirint):
 
 @pytest.mark.asyncio
 async def test_get_labirint_books(labirint: Labirint):
-    mock = aiohttp.ClientSession
+    mock = RetryClient
     mock.get = MagicMock()
     mock.get.return_value.__aenter__.return_value.status = 200
     mock.get.return_value.__aenter__.return_value.text.return_value = successful_template
@@ -69,7 +69,7 @@ async def test_get_labirint_books(labirint: Labirint):
 
 @pytest.mark.asyncio
 async def test_get_labirint_books_if_request_failed(labirint: Labirint):
-    mock = aiohttp.ClientSession
+    mock = RetryClient
     mock.get = MagicMock()
     mock.get.return_value.__aenter__.return_value.status = 500
 

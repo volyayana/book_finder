@@ -1,24 +1,18 @@
-from settings import settings
+from config.settings import Settings
 from store.abstractStore import AbstractStore
-from store.chitai_gorod import ChitaiGorod
-from store.labirint import Labirint
 
 
-async def get_books_by_source(source_list: list[type[AbstractStore]], search_query: str):
-    books = []
-    for source in source_list:
-        store = source()
-        books.extend(await store.get_books(search_query))
-    return books
+settings = Settings()  # type: ignore
 
 
-async def get_books_from_all_sources(search_query: str | None = ''):
+async def get_books_from_all_sources(sources: list[AbstractStore], search_query: str | None = ''):
     if not search_query:
         return None
 
-    sources = [ChitaiGorod, Labirint]
+    unsorted_books = []
+    for source in sources:
+        unsorted_books.extend(await source.get_books(search_query))
 
-    unsorted_books = await get_books_by_source(sources, search_query)
     sorted_books = sorted(unsorted_books, key=lambda x: x.price)[:settings.limit_books]
 
     return format_books_list(sorted_books)
