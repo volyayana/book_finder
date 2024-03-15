@@ -2,7 +2,7 @@ import pytest
 
 from dotenv import load_dotenv
 
-load_dotenv("tests/fixtures/test.environment", override=True)
+load_dotenv("book_finder/tests/fixtures/test.environment", override=True)
 
 import os
 import logging
