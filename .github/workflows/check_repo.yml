@@ -17,14 +17,14 @@ jobs:
       run: |
         pip install -r book_finder/requirements.txt
 
-#    - name: Run flake8
-#      run: |
-#        flake8 book_finder
-#
-#    - name: Run mypy
-#      run: |
-#        mypy book_finder
+    - name: Run flake8
+      run: |
+        flake8 book_finder
+
+    - name: Run mypy
+      run: |
+        mypy book_finder
 
     - name: Run tests
       run: |
-        pytest -vvvv
+        pytest
