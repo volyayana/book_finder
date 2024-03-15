@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 
 load_dotenv("tests/fixtures/test.environment", override=True)
 
+import os
+print(os.getenv('LIMIT_BOOKS'))
+
 from config.settings import Settings
 from store.chitai_gorod import ChitaiGorod
 from store.labirint import Labirint
