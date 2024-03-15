@@ -1,3 +1,3 @@
 [flake8]
 exclude = venv, book_finder/tests/html_templates
-ignore = E501
+ignore = E501, E402
