@@ -7,8 +7,10 @@ statuses.remove(429)
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file='../.env', env_file_encoding='utf-8')
+    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
 
     api_token: str = Field(alias='TELEGRAM_KEY')
     limit_books: int = Field(alias='LIMIT_BOOKS')
     allowed_statuses: set[int] = statuses
+
+    celery_url: str = Field(alias='CELERY_URL')

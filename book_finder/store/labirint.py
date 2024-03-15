@@ -11,6 +11,7 @@ from urllib.parse import quote
 from models import Book
 from config.settings import Settings
 from store.abstractStore import AbstractStore
+from utils import log_error
 
 
 class Labirint(AbstractStore):
@@ -33,7 +34,7 @@ class Labirint(AbstractStore):
                                         retry_options=retry_options,
                                         ) as resp:
                 if resp.status != 200:
-                    logging.error('ERROR: Labirint request status_code: %s' % resp.status)
+                    log_error('ERROR: Labirint request status_code: %s' % resp.status)
                     return None
 
                 logging.info('Labirint request status_code: %s' % resp.status)

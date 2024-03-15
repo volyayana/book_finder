@@ -9,6 +9,7 @@ from pprint import pprint
 from models import Book
 from config.settings import Settings
 from store.abstractStore import AbstractStore
+from utils import log_error
 
 
 class ChitaiGorod(AbstractStore):
@@ -35,7 +36,7 @@ class ChitaiGorod(AbstractStore):
                     cookies = session.cookie_jar.filter_cookies(self.book_url)
                     self.access_token = cookies['access-token'].value.replace('%20', ' ')
                 except KeyError:
-                    logging.error('Error occurred during ChitaiGorod pre-request %s' % resp.status)
+                    log_error('Error occurred during ChitaiGorod pre-request %s' % resp.status)
                 finally:
                     await retry_client.close()
 

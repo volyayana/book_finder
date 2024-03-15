@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 import pytest as pytest
 from aiohttp_retry import RetryClient
 from bs4 import ResultSet, BeautifulSoup
+from unittest import mock
 
 from store.labirint import Labirint
 from tests.html_templates.labirint_book_list import books_template_with_author, books_template_without_author
@@ -50,10 +51,10 @@ async def test_books_template_without_author(labirint: Labirint):
 
 @pytest.mark.asyncio
 async def test_get_labirint_books(labirint: Labirint):
-    mock = RetryClient
-    mock.get = MagicMock()
-    mock.get.return_value.__aenter__.return_value.status = 200
-    mock.get.return_value.__aenter__.return_value.text.return_value = successful_template
+    mocked_client = RetryClient
+    mocked_client.get = MagicMock()
+    mocked_client.get.return_value.__aenter__.return_value.status = 200
+    mocked_client.get.return_value.__aenter__.return_value.text.return_value = successful_template
 
     books = await labirint.get_books('мастер и маргарита')
 
@@ -69,10 +70,11 @@ async def test_get_labirint_books(labirint: Labirint):
 
 @pytest.mark.asyncio
 async def test_get_labirint_books_if_request_failed(labirint: Labirint):
-    mock = RetryClient
-    mock.get = MagicMock()
-    mock.get.return_value.__aenter__.return_value.status = 500
+    mocked_client = RetryClient
+    mocked_client.get = MagicMock()
+    mocked_client.get.return_value.__aenter__.return_value.status = 500
 
-    books = await labirint.get_books('мастер и маргарита')
+    with mock.patch('worker.send_error_message.delay'):
+        books = await labirint.get_books('мастер и маргарита')
 
     assert books is None

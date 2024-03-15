@@ -1,11 +1,12 @@
 import asyncio
 import logging
 
-from aiogram import Bot, Dispatcher, types, F
+from aiogram import types, F
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 
 from book_service import get_books_from_all_sources
+from bot import bot, dp
 from config.settings import Settings
 
 from store.chitai_gorod import ChitaiGorod
@@ -13,10 +14,6 @@ from store.labirint import Labirint
 
 settings = Settings()  # type: ignore
 logging.basicConfig(level=logging.INFO)
-
-
-bot = Bot(token=settings.api_token)
-dp = Dispatcher()
 
 
 sources = [ChitaiGorod(settings), Labirint(settings)]

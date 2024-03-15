@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+
+  bot:
+    build: ./book_finder
+    ports:
+      - "8004:8000"
+    entrypoint: python main.py
+    volumes:
+      - ./book_finder:/usr/src/app
+    env_file:
+      - .env
+    depends_on:
+      - redis
+
+  worker:
+    build: ./book_finder
+    command: celery -A worker.celery worker --loglevel=info --logfile=logs/celery.log
+    volumes:
+      - ./book_finder:/usr/src/app
+    env_file:
+      - .env
+    depends_on:
+      - bot
+      - redis
+
+  redis:
+    ports:
+      - "6379:6379"
+    image: redis:7
+
+  dashboard:
+    build: ./book_finder
+    command: celery --broker=redis://redis:6379/0 flower --port=5555
+    ports:
+      - "5556:5555"
+    env_file:
+      - .env
+    depends_on:
+      - bot
+      - redis
+      - worker
