@@ -1,4 +1,0 @@
-TELEGRAM_KEY=telegram_key
-
-LIMIT_BOOKS=6
-CELERY_URL=redis://redis:6379/0
