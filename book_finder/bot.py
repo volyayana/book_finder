@@ -3,7 +3,8 @@ from aiogram import Bot, Dispatcher
 from config.settings import Settings
 
 import os
-print(os.getenv('LIMIT_BOOKS'))
+import logging
+logging.error(os.getenv('LIMIT_BOOKS'))
 
 settings = Settings()  # type: ignore
 
