@@ -1,2 +1,3 @@
 /venv
 .env
+book_finder/tests/fixtures/test.environment

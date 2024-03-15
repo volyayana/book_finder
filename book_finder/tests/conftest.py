@@ -2,11 +2,11 @@ import pytest
 
 from dotenv import load_dotenv
 
+load_dotenv("fixtures/test.environment", override=True)
+
 from config.settings import Settings
 from store.chitai_gorod import ChitaiGorod
 from store.labirint import Labirint
-
-load_dotenv("tests/fixtures/test.environment", override=True)
 
 settings = Settings()  # type: ignore
 
