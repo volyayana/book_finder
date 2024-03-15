@@ -15,7 +15,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt
+        pip install -r book_finder/requirements.txt
 
     - name: Run flake8
       run: |
