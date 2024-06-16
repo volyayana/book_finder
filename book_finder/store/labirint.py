@@ -73,7 +73,8 @@ class Labirint(AbstractStore):
 
 
 async def main():
-    lab_store = Labirint()
+    settings = Settings()
+    lab_store = Labirint(settings)
     lab_books = await lab_store.get_books('мастер и маргарита')
     pprint(lab_books)
 

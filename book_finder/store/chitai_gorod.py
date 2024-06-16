@@ -110,7 +110,8 @@ class ChitaiGorod(AbstractStore):
 
 
 async def main():
-    cg_store = ChitaiGorod()
+    settings = Settings()
+    cg_store = ChitaiGorod(settings)
     cg_books = await cg_store.get_books('мастер и маргарита')
     pprint(cg_books)
 
