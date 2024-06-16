@@ -65,9 +65,9 @@ class Labirint(AbstractStore):
             author = book.find(class_='product-card__author')
             if author:
                 parsed_book.author = author.a['title']
-            img_src = book.find('img')
-            if img_src:
-                parsed_book.image_url = img_src['data-src']
+            # img_src = book.find('img')
+            # if img_src:
+            #     parsed_book.image_url = img_src['data-src']
             books.append(parsed_book)
         return books
 

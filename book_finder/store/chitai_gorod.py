@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from http import HTTPStatus
 
 import aiohttp
 from aiohttp_retry import RetryClient, ExponentialRetry
@@ -31,24 +32,28 @@ class ChitaiGorod(AbstractStore):
                                         ssl=False,
                                         retry_options=retry_options,
                                         ) as resp:
-                try:
-                    logging.debug('ChitaiGorod pre-request status_code: %s' % resp.status)
-                    cookies = session.cookie_jar.filter_cookies(self.book_url)
-                    self.access_token = cookies['access-token'].value.replace('%20', ' ')
-                except KeyError:
-                    log_error('Error occurred during ChitaiGorod pre-request %s' % resp.status)
-                finally:
-                    await retry_client.close()
+                logging.debug('ChitaiGorod pre-request status_code: %s' % resp.status)
+                cookies = session.cookie_jar.filter_cookies(self.book_url)
+                await retry_client.close()
+            try:
+                self.access_token = cookies['access-token'].value.replace('%20', ' ')
+            except KeyError:
+                log_error('Error occurred during ChitaiGorod pre-request %s' % resp.status)
 
-    async def get_books(self, search_query: str):
-        # pre-request only to get cookies with token
+    async def check_access_token(self):
         if self.access_token is None:
             await self.pre_request()
             if self.access_token is None:
-                return []
+                log_error('Error occurred during ChitaiGorod pre-request')
+                return False
+        return True
+
+    async def get_books_json(self, search_query: str):
+        if not await self.check_access_token():
+            return {}
 
         # sleep to emulate user
-        await asyncio.sleep(1)
+        # await asyncio.sleep(1)
 
         headers = {
             'Authorization': self.access_token,
@@ -69,10 +74,15 @@ class ChitaiGorod(AbstractStore):
                                         ssl=False,
                                         retry_options=retry_options,
                                         ) as resp:
+                if resp.status != HTTPStatus.OK:
+                    log_error('Error occurred during ChitaiGorod request %s' % resp.status)
+                    return {}
                 books = await resp.json()
-                if books:
-                    books = self.get_parsed_books(books)
         return books
+
+    async def get_books(self, search_query: str):
+        book_json = await self.get_books_json(search_query)
+        return self.get_parsed_books(book_json)
 
     def get_parsed_books(self, book_json):
         books = []
@@ -84,7 +94,7 @@ class ChitaiGorod(AbstractStore):
                      link=f'{self.book_url}/{book["attributes"]["url"]}',
                      price=book['attributes']['price'],
                      store=self.store,
-                     image_url=f'{self.image_url}/{book["attributes"]["picture"]}?width=400&height=560&fit=bounds'
+                     # image_url=f'{self.image_url}/{book["attributes"]["picture"]}?width=400&height=560&fit=bounds'
                      )
                 for book in books_result if book['type'] == 'product'
             ]
@@ -95,7 +105,7 @@ class ChitaiGorod(AbstractStore):
         authors = book.get('authors')
         if not authors:
             return ''
-        str_authors = [f'{a["firstName"]} {a["middleName"]} {a["lastName"]}' for a in authors]
+        str_authors = [f'{a.get("firstName")} {a.get("middleName")} {a.get("lastName")}' for a in authors]
         return ', '.join(str_authors)
 
 

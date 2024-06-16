@@ -7,4 +7,4 @@ class Book(BaseModel):
     link: str
     price: float
     store: str
-    image_url: str | None = None
+    # image_url: str | None = None
